@@ -1,114 +1,137 @@
 # Setup Kubernetes Cluster v.1.31 on RHEL
 <img src="https://cdn.worldvectorlogo.com/logos/red-hat.svg" alt="K8s kubeadm tool" height="200"><img src="https://kubernetes.io/images/kubeadm-stacked-color.png" alt="K8s kubeadm tool" height="200">
 
-## Step 1. Disable SELinux, set permissive mode
+## Step 1. Remove any older version of docker
+
+```
+sudo dnf remove docker \
+                  docker-client \
+                  docker-client-latest \
+                  docker-common \
+                  docker-latest \
+                  docker-latest-logrotate \
+                  docker-logrotate \
+                  docker-engine \
+                  podman \
+                  runc
+```
+
+## Step 2. Disable SELinux and Firewalld
   ```
   sudo setenforce 0
   sudo sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
   ```
+  ```
+  sudo systemctl disable firewalld
+  sudo systemctl disable firewalld
+  ```
 
-## Step 2. Disable swap memory for all nodes
+## Step 3. Disable swap memory for all nodes
+
   ```
   sudo swapoff -a
   sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
   ```
 
-## Step 3. Manually enable IPv4 packet forwarding
+## Step 4. Enable Kernel Modules and Settings
 
 ```
-cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
-net.ipv4.ip_forward = 1
-EOF
-
-# Apply sysctl params without reboot
-
-sudo sysctl --system
-```
-
-<h4>Verify that net.ipv4.ip_forward is set to 1 with:</h4>
-
-```
-sysctl net.ipv4.ip_forward
-```
-
-
-## Step 4. Install containerd 
-<h4>Add docker gpg key and repository</h4>
-
-```
-install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-chmod a+r /etc/apt/keyrings/docker.asc
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-  tee /etc/apt/sources.list.d/docker.list > /dev/null
-```
-<h4>Update packages and install containerd</h4>
-
-```
-apt-get update
-apt-get install containerd.io -y
-```
-<h4>Configure containerd to use systemd as the cgroup driver to use systemd cgroups.</h4>
-
-```
-mkdir -p /etc/containerd
-containerd config default | tee /etc/containerd/config.toml
-sed -e 's/SystemdCgroup = false/SystemdCgroup = true/g' -i /etc/containerd/config.toml
-systemctl restart containerd
-systemctl enable containerd
-```
-
-<h4>Update containerd to load the overlay and br_netfilter modules</h4>
-
-```
-cat <<EOF | tee /etc/modules-load.d/containerd.conf
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
 overlay
 br_netfilter
 EOF
 ```
 
-<h4>Update kernel network settings to allow traffic to be forwarded</h4>
+```
+sudo modprobe overlay
+sudo modprobe br_netfilter
+```
 
 ```
-cat << EOF | tee /etc/sysctl.d/kubernetes.conf
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
 net.bridge.bridge-nf-call-ip6tables = 1
-net.bridge.bridge-nf-call-iptables = 1
-net.ipv4.ip_forward = 1
+net.ipv4.ip_forward                 = 1
+EOF
+```
+```
+# Apply changes
+sudo sysctl --system
+```
+
+## Step 5. Install Containerd Runtime
+
+```
+sudo dnf install -y containerd.io
+sudo systemctl enable --now containerd
+```
+
+<h4>Create default config</h4>
+
+```
+sudo mkdir -p /etc/containerd
+sudo containerd config default | sudo tee /etc/containerd/config.toml
+```
+
+<h4>Set systemd as cdgroup driver</h4>
+
+```
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+  SystemdCgroup = true
+```
+
+```
+sudo systemctl restart containerd
+sudo systemctl enable containerd
+```
+
+## Step 6. Add Kubernetes into yum repository
+
+```
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.31/rpm/
+enabled=1
+gpgcheck=1
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.31/rpm/repodata/repomd.xml.key
 EOF
 ```
 
-<h4>Load kernel modules and verify containerd is running</h4>
+## Step 7. Install Kubelet, Kubeadm and Kubectl
 
 ```
-modprobe overlay
-modprobe br_netfilter
-sysctl --system
-```
-```
-systemctl status containerd
+sudo dnf install -y kubelet-1.31.0 kubeadm-1.31.0 kubectl-1.31.0
 ```
 
-## Step 5.  Install Kubelet, Kubeadm and Kubectl
-<h4>Add Kubernetes repository</h4>
+<h4>Enable on Kubelet on startup</h4>
 
 ```
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list
+sudo systemctl enable --now kubelet
 ```
 
-<h4>Update system, Install the packages and lock versions used. </h4>
+## Step 8. Initialize Kubernetes Master Node (Controlplane)
 
 ```
-apt-get update
-apt-get install -y kubelet=1.31.*- kubeadm=1.31.3-1.1 kubectl=1.31.3-1.1
-apt-mark hold kubelet kubeadm kubectl
+sudo kubeadm init --pod-network-cidr=192.168.0.0/16 --kubernetes-version v1.31.0
 ```
-<h4>Enable Kubelet</h4>
 
+## Step 9. Configure kubectl regular user
 ```
-systemctl enable --now kubelet
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+## Step 10. Install Calico Add-On for Pod Networking
+```
+kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+```
+
+## Step 12. Create token in order to join Worker nodes to the cluster
+```
+kubeadm token create --print-join-command
+
 ```
 
 <h1>Install helm to help with app installations.</h1>
