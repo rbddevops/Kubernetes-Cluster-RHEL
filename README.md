@@ -90,22 +90,24 @@ sysctl --system
 systemctl status containerd
 ```
 
-## Step 5. Add Kubernetes repository
+## Step 5.  Install Kubelet, Kubeadm and Kubectl
+<h4>Add Kubernetes repository</h4>
+
 ```
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list
 ```
+
+<h4>Update system, Install the packages and lock versions used. </h4>
+
 ```
 apt-get update
 apt-get install -y kubelet=1.31.*- kubeadm=1.31.3-1.1 kubectl=1.31.3-1.1
 apt-mark hold kubelet kubeadm kubectl
 ```
+<h4>Enable Kubelet</h4>
 
+```
+systemctl enable --now kubelet
+```
 
-## Step 6. Install kubelet, kubeadm and kubectl
-```
-sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
-```
-```
-sudo systemctl enable --now kubelet
-```
