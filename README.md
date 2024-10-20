@@ -4,7 +4,7 @@
 ## Step 1. Remove any older version of docker
 
 ```
-sudo dnf remove docker \
+sudo dnf remove -y docker \
                   docker-client \
                   docker-client-latest \
                   docker-common \
@@ -40,49 +40,55 @@ cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
 overlay
 br_netfilter
 EOF
-```
 
-```
 sudo modprobe overlay
 sudo modprobe br_netfilter
-```
 
-```
 cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
 net.bridge.bridge-nf-call-iptables  = 1
 net.bridge.bridge-nf-call-ip6tables = 1
 net.ipv4.ip_forward                 = 1
 EOF
-```
-```
-# Apply changes
+
 sudo sysctl --system
 ```
 
 ## Step 5. Install Containerd Runtime
 
 ```
+sudo dnf install -y yum-utils device-mapper-persistent-data lvm2
+```
+
+```
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+```
+
+```
 sudo dnf install -y containerd.io
 sudo systemctl enable --now containerd
 ```
 
-<h4>Create default config</h4>
+<h4>Configure containerd</h4>
 
 ```
 sudo mkdir -p /etc/containerd
 sudo containerd config default | sudo tee /etc/containerd/config.toml
 ```
 
-<h4>Set systemd as cdgroup driver</h4>
+<h4>Edit file at path /etc/containerd/config.toml and set systemd as cdgroup driver</h4>
 
 ```
-[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
-  SystemdCgroup = true
+sudo vi /etc/containerd/config.toml
+
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+  ...
+  [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+    SystemdCgroup = true
 ```
 
 ```
 sudo systemctl restart containerd
-sudo systemctl enable containerd
+sudo systemctl enable containerd --now
 ```
 
 ## Step 6. Add Kubernetes into yum repository
@@ -95,13 +101,14 @@ baseurl=https://pkgs.k8s.io/core:/stable:/v1.31/rpm/
 enabled=1
 gpgcheck=1
 gpgkey=https://pkgs.k8s.io/core:/stable:/v1.31/rpm/repodata/repomd.xml.key
+exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
 EOF
 ```
 
 ## Step 7. Install Kubelet, Kubeadm and Kubectl
 
 ```
-sudo dnf install -y kubelet-1.31.0 kubeadm-1.31.0 kubectl-1.31.0
+sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 ```
 
 <h4>Enable on Kubelet on startup</h4>
@@ -113,7 +120,7 @@ sudo systemctl enable --now kubelet
 ## Step 8. Initialize Kubernetes Master Node (Controlplane)
 
 ```
-sudo kubeadm init --pod-network-cidr=192.168.0.0/16 --kubernetes-version v1.31.0
+sudo kubeadm init --apiserver-advertise-address=192.168.70.134 --pod-network-cidr=10.244.0.0/16
 ```
 
 ## Step 9. Configure kubectl regular user
