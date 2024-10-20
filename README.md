@@ -150,7 +150,7 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 ```
 
-## Step 12. Create token in order to join Worker nodes to the cluster
+## Step 11. Create token to join Worker nodes
 ```
 kubeadm token create --print-join-command
 ```
@@ -163,7 +163,7 @@ source <(kubectl completion bash)
 echo "source <(kubectl completion bash)" >> ~/.bashrc
 ```
 
-<h4>Configure vi editor</h4>
+<h4>Configure vim editor</h4>
 
 ```
 cat <<EOF | tee -a ~/.vimrc
@@ -172,7 +172,6 @@ set expandtab
 set shiftwidth=2
 EOF
 ```
-
 
 <h4>Set alias for Kubectl command</h4>
 
@@ -183,7 +182,7 @@ complete -o default -F __start_kubectl k
 EOF
 ```
 
-<h4>Install helm for ease app installation</h4>
+<h4>Install Helm package for ease app installation</h4>
 
 ```
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
