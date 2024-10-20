@@ -133,7 +133,9 @@ sudo systemctl enable --now kubelet
 ## Step 8. Initialize Kubernetes Master Node (Controlplane)
 
 ```
-sudo kubeadm init --apiserver-advertise-address=192.168.70.134 --pod-network-cidr=10.244.0.0/16
+sudo kubeadm config images pull
+sudo ip a
+sudo kubeadm init --apiserver-advertise-address=192.168.137.144 --pod-network-cidr=10.244.0.0/16
 ```
 
 ## Step 9. Configure kubectl regular user
@@ -151,10 +153,37 @@ kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 ## Step 12. Create token in order to join Worker nodes to the cluster
 ```
 kubeadm token create --print-join-command
-
 ```
 
-<h1>Install helm to help with app installations.</h1>
+<h1>Recommended Configurations</h1>
+<h4>Kubectl completion</h4>
+
+```
+source <(kubectl completion bash)
+echo "source <(kubectl completion bash)" >> ~/.bashrc
+```
+
+<h4>Configure vi editor</h4>
+
+```
+cat <<EOF | tee -a ~/.vimrc
+set tabstop=2
+set expandtab
+set shiftwidth=2
+EOF
+```
+
+
+<h4>Set alias for Kubectl command</h4>
+
+```
+cat <<EOF | tee -a ~/.bashrc
+alias k=kubectl
+complete -o default -F __start_kubectl k
+EOF
+```
+
+<h4>Install helm for ease app installation</h4>
 
 ```
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
