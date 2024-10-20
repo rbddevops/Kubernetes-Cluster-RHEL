@@ -8,7 +8,7 @@
   ```
   
   ```
-  sudo hostnamectl set-hostname controlplane
+  sudo hostnamectl set-hostname <hostname>
   ```
   ```
   sudo nano /etc/hosts
@@ -36,7 +36,7 @@ sudo dnf remove -y docker \
   ```
   ```
   sudo systemctl disable firewalld
-  sudo systemctl disable firewalld
+  sudo systemctl status firewalld
   ```
 
 ## Step 3. Disable swap memory for all nodes
