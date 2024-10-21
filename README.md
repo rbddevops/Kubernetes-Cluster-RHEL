@@ -4,7 +4,7 @@
 <h2>Pre-requisites</h2>
 <ul>
  <li>Root privileges</li>
- <li>SSH package Installed</li>
+ <li>Ssh and Git package Installed</li>
  <li>Set a Hostname for each Node</li>
  <li>Add IP Address and it's Hostname on <span style="color: blue">/etc/hosts<span></li>
 </ul>
