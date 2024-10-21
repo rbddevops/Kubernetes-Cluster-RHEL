@@ -1,20 +1,25 @@
 # Setup Kubernetes Cluster v.1.31 on RHEL
-<img src="https://cdn.worldvectorlogo.com/logos/red-hat.svg" alt="K8s kubeadm tool" height="100"><img src="https://kubernetes.io/images/kubeadm-stacked-color.png" alt="K8s kubeadm tool" height="100">
+<img src="https://cdn.worldvectorlogo.com/logos/red-hat.svg" alt="K8s kubeadm tool" height="150"><img src="https://kubernetes.io/images/kubeadm-stacked-color.png" alt="K8s kubeadm tool" height="150">
 
 <h2>Pre-requisites</h2>
-  
+ 
+  ```
+  sudo -i 
+  ```
+
   ```
   sudo dnf install openssh-server
   ```
-  
+
   ```
   sudo hostnamectl set-hostname <hostname>
   ```
+
   ```
   sudo nano /etc/hosts
   ```
 
-## Step 1. Remove any older version of docker
+## Step 1. Remove older versions of docker
 
 ```
 sudo dnf remove -y docker \
@@ -92,7 +97,9 @@ sudo containerd config default | sudo tee /etc/containerd/config.toml
 
 ```
 sudo vi /etc/containerd/config.toml
+```
 
+```
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
   ...
   [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
