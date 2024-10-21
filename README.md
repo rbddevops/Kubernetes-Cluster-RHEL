@@ -166,6 +166,9 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ## Step 10. Install Add-On for Pod Networking (Flannel, Calico..)
 ```
 kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+```
+
+```
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 ```
 
@@ -174,6 +177,25 @@ kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 ```
 kubeadm token create --print-join-command
 ```
+
+<h2>Install Helm</h2>
+
+```
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+```
+
+<h2>Deploy Kubernetes Dashboard</h2>
+
+```
+helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
+```
+
+```
+helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace kubernetes-dashboard
+```
+
 
 <h1>Recommended Configurations</h1>
 
@@ -201,12 +223,4 @@ cat <<EOF | tee -a ~/.bashrc
 alias k=kubectl
 complete -o default -F __start_kubectl k
 EOF
-```
-
-<h4>Install Helm package for ease app installation</h4>
-
-```
-curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-chmod 700 get_helm.sh
-./get_helm.sh
 ```
