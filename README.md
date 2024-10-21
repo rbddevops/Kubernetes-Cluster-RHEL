@@ -42,6 +42,7 @@ sudo dnf remove -y docker \
   sudo sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
   ```
   ```
+  sudo systemctl stop firewalld
   sudo systemctl disable firewalld
   sudo systemctl status firewalld
   ```
