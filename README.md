@@ -6,7 +6,7 @@
  <li>Root privileges</li>
  <li>SSH package Installed</li>
  <li>Set a Hostname for each Node</li>
- <li>Add IP Address and it's Hostname on /etc/hosts</li>
+ <li>Add IP Address and it's Hostname on <span style="color: blue">/etc/hosts<span></li>
 </ul>
 
   ```
@@ -133,7 +133,7 @@ EOF
 sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 ```
 
-<h4>Enable on Kubelet on startup</h4>
+<h4>Enable Kubelet on startup</h4>
 
 ```
 sudo systemctl enable --now kubelet
@@ -143,7 +143,15 @@ sudo systemctl enable --now kubelet
 
 ```
 sudo kubeadm config images pull
+```
+
+<h4>Check ethernet IP Address</h4>
+
+```
 sudo ip a
+```
+
+```
 sudo kubeadm init --apiserver-advertise-address=192.168.137.144 --pod-network-cidr=10.244.0.0/16
 ```
 
@@ -159,12 +167,14 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 ```
 
-## Step 11. Create token to join Worker nodes
+<h1>Join Worker Nodes</h1>
+
 ```
 kubeadm token create --print-join-command
 ```
 
 <h1>Recommended Configurations</h1>
+
 <h4>Kubectl completion</h4>
 
 ```
