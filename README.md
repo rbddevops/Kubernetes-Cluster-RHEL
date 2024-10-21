@@ -6,7 +6,7 @@
  <li>Root privileges</li>
  <li>SSH package Installed</li>
  <li>Set a Hostname for each Node</li>
- <li>Add IP Address and it's Hostname on file /etc/hosts</li>
+ <li>Add IP Address and it's Hostname on /etc/hosts</li>
 </ul>
 
   ```
