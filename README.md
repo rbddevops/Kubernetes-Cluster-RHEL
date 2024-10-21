@@ -162,8 +162,9 @@ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
-## Step 10. Install Calico Add-On for Pod Networking
+## Step 10. Install Add-On for Pod Networking (Flannel, Calico..)
 ```
+kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 ```
 
