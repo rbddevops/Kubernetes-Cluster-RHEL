@@ -10,7 +10,7 @@
 </ul>
 
   ```
-  sudo dnf install openssh-server
+  sudo dnf install -y openssh-server && dnf install -y git
   ```
 
   ```
