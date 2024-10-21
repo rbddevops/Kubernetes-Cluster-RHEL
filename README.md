@@ -2,10 +2,12 @@
 <img src="https://cdn.worldvectorlogo.com/logos/red-hat.svg" alt="K8s kubeadm tool" height="150"><img src="https://kubernetes.io/images/kubeadm-stacked-color.png" alt="K8s kubeadm tool" height="150">
 
 <h2>Pre-requisites</h2>
- 
-  ```
-  sudo -i 
-  ```
+<ul>
+ <li>Root privileges</li>
+ <li>SSH package Installed</li>
+ <li>Set a Hostname for each Node</li>
+ <li>Add IP Address and it's Hostname on file /etc/hosts</li>
+</ul>
 
   ```
   sudo dnf install openssh-server
