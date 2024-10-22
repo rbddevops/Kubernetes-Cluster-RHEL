@@ -174,25 +174,6 @@ kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 kubeadm token create --print-join-command
 ```
 
-<h2>Install Helm</h2>
-
-```
-curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-chmod 700 get_helm.sh
-./get_helm.sh
-```
-
-<h2>Deploy Kubernetes Dashboard</h2>
-
-```
-helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
-```
-
-```
-helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace kubernetes-dashboard
-```
-
-
 <h1>Recommended Configurations</h1>
 
 <h4>Kubectl completion</h4>
@@ -220,3 +201,50 @@ alias k=kubectl
 complete -o default -F __start_kubectl k
 EOF
 ```
+
+<h2>Install Helm</h2>
+
+```
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+```
+
+<h2>Deploy Kubernetes Dashboard</h2>
+
+```
+helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
+```
+
+```
+helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace kubernetes-dashboard
+```
+
+<h2>Deploy NGINX Ingress Controller</h2>
+
+<h4>Step 1. Install NGINX Ingress Controller</h4>
+
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.44.0/deploy/static/provider/cloud/deploy.yaml
+```
+
+<h4>Step 2. Exposing the NGINX Ingress Controller</h4>
+
+<h4>Load Balancer</h4>
+
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.44.0/deploy/static/provider/cloud/deploy.yaml
+```
+
+<h4>Node Port</h4>
+
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.44.0/deploy/static/provider/baremetal/deploy.yaml
+```
+
+<h4>Step 3. Validate the NGINX Ingress Controller is running</h4>
+
+```
+kubectl get all -n ingress-nginx
+```
+
