@@ -142,10 +142,6 @@ sudo systemctl enable --now kubelet
 
 ## Step 8. Initialize Kubernetes Master Node (Controlplane)
 
-```
-sudo kubeadm config images pull
-```
-
 <h4>Check ethernet IP Address</h4>
 
 ```
