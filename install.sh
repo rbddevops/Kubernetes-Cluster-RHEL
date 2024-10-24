@@ -2,11 +2,6 @@
 
 # Script to set up Kubernetes Cluster v1.31 on RHEL
 
-# Prerequisites: Root privileges, SSH, Git package Installed, Hostname set for each Node, and Host file updated
-sudo dnf install -y openssh-server git
-sudo hostnamectl set-hostname <hostname>  # Replace <hostname> with the actual hostname
-sudo nano /etc/hosts  # Update the /etc/hosts file with IP and hostname mapping
-
 # Step 1. Remove older versions of Docker and related packages
 sudo dnf remove -y docker \
                   docker-client \
