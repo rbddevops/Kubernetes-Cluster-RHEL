@@ -1,12 +1,15 @@
-# Setup Kubernetes Cluster v.1.31 on RHEL
-<img src="https://cdn.worldvectorlogo.com/logos/red-hat.svg" alt="K8s kubeadm tool" height="150"><img src="https://kubernetes.io/images/kubeadm-stacked-color.png" alt="K8s kubeadm tool" height="150">
+# Setup Kubernetes Cluster
+
+![Command](https://img.shields.io/badge/Linux_Distribution-RHEL-red)  ![Command](https://img.shields.io/badge/Tool-Kubeadm-blue)  ![Command](https://img.shields.io/badge/release-v1.31-blue) 
+
+<img src="https://raw.githubusercontent.com/kubernetes/kubernetes/master/logo/logo.png" height="100"><img src="https://kubernetes.io/images/kubeadm-stacked-color.png" alt="K8s kubeadm tool" height="100"> 
 
 <h2>Pre-requisites</h2>
 <ul>
  <li>Root privileges</li>
  <li>Ssh and Git package Installed</li>
  <li>Set a Hostname for each Node</li>
- <li>Add IP Address and it's Hostname on <span style="color: blue">/etc/hosts<span></li>
+ <li>Add IP Address and it's Hostname on  <span style="color: red;">/etc/hosts</span></li></span>
 </ul>
 
   ```
