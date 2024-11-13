@@ -134,7 +134,7 @@ EOF
 ## Step 7. Install Kubelet, Kubeadm and Kubectl
 
 ```
-sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+sudo yum install -y kubelet-1.31.1 kubeadm-1.31.1 kubectl-1.31.1 --disableexcludes=kubernetes
 ```
 
 <h4>Enable Kubelet on startup</h4>
